@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
+using Projekt_ASP.Models.Ads;
 
 namespace Projekt_ASP.Models
 {
@@ -8,11 +10,11 @@ namespace Projekt_ASP.Models
         public int Id { get; set; }
 
         [Required]
-        public byte[] ImageData { get; set; }
+        public byte[] ImageData { get; set; } = Array.Empty<byte>();
 
         [Required]
         public int AdId { get; set; }
 
-        public Ad Ad { get; set; }
+        public Ad Ad { get; set; } = null!;
     }
 }

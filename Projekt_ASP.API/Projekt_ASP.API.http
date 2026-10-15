@@ -1,0 +1,6 @@
+@Projekt_ASP.API_HostAddress = http://localhost:5051
+
+GET {{Projekt_ASP.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

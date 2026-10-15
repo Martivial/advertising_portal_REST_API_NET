@@ -8,8 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
-builder.Services.AddScoped<SessionValidationFilter>();
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -19,19 +17,26 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddHttpContextAccessor(); // Add this line
+builder.Services.AddHttpContextAccessor();
 
-// Dodaj DbContext do kontenera DI
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-// Dodaj obs³ugê sesji
+
+builder.Services.AddHttpClient("AdvertisingApi", client =>
+{
+    client.BaseAddress = new Uri(
+        builder.Configuration["ApiSettings:BaseUrl"]!);
+});
+
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Czas wygaœniêcia sesji
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddScoped<Projekt_ASP.Services.AdsApiClient>();
 
 builder.Services.AddControllersWithViews();
 
@@ -54,7 +59,7 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseSession(); // U¿ywamy sesji
+app.UseSession(); // Uï¿½ywamy sesji
 app.UseAuthentication();
 app.UseAuthorization();
 

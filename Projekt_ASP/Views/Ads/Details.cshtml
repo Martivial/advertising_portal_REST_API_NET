@@ -1,211 +1,134 @@
-﻿@model Projekt_ASP.Models.Ad
+﻿
+@model Projekt_ASP.Models.Ads.Ad
 
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = Model.Title;
 }
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
     <div class="row">
-        <!-- Zdjęcia ogłoszenia -->
-        <div class="col-md-6">
-            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    @if (Model.Images != null && Model.Images.Any())
-                    {
-                        // Wyświetlanie pierwszego obrazu, jeśli istnieje
-                        var firstImage = Model.Images.First();
-                        if (firstImage.ImageData != null && firstImage.ImageData.Length > 0)
+        <div class="col-md-6 mb-4">
+            @if (Model.Images != null && Model.Images.Any())
+            {
+                <div id="adImages" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @{
+                            var validImages = Model.Images
+                                .Where(i => i.ImageData != null && i.ImageData.Length > 0)
+                                .ToList();
+                        }
+                        @for (var i = 0; i < validImages.Count; i++)
                         {
-                            var base64Image = Convert.ToBase64String(firstImage.ImageData);
-                            <div class="carousel-item active">
-                                <img src="data:image/jpeg;base64,@base64Image" class="d-block w-100" alt="Ad Image" style="max-height: 500px; object-fit: cover;">
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(validImages[i].ImageData)"
+                                     class="d-block w-100"
+                                     style="max-height:500px; object-fit:contain;"
+                                     alt="Zdjęcie ogłoszenia" />
                             </div>
                         }
-                        else
-                        {
-                            <p>Brak obrazu do wyświetlenia</p>
-                        }
-
-                        // Wyświetlanie pozostałych obrazów, jeśli istnieją
-                        @foreach (var image in Model.Images.Skip(1))
-                        {
-                            if (image.ImageData != null && image.ImageData.Length > 0)
-                            {
-                                var base64Image = Convert.ToBase64String(image.ImageData);
-                                <div class="carousel-item">
-                                    <img src="data:image/jpeg;base64,@base64Image" class="d-block w-100" alt="Ad Image" style="max-height: 500px; object-fit: cover;">
-                                </div>
-                            }
-                            else
-                            {
-                                <p>Brak obrazu do wyświetlenia</p>
-                            }
-                        }
-                    }
-                    else
+                    </div>
+                    @if (validImages.Count > 1)
                     {
-                        <p>Brak obrazów w tym ogłoszeniu.</p>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#adImages" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                            <span class="visually-hidden">Poprzednie</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#adImages" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                            <span class="visually-hidden">Następne</span>
+                        </button>
                     }
                 </div>
-
-                <!-- Przycisk do przewijania w lewo -->
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-
-                <!-- Przycisk do przewijania w prawo -->
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
+            }
+            else
+            {
+                <div class="alert alert-light">Brak zdjęć tego ogłoszenia.</div>
+            }
         </div>
 
-        <!-- Szczegóły ogłoszenia -->
         <div class="col-md-6">
-            <h1 class="display-4">@Model.Title</h1>
-            <p class="lead text-muted">Opublikowane: @Model.PostedDate.ToString("dd MMM yyyy")</p>
+            <h1>@Model.Title</h1>
+            <p class="text-muted">Kategoria: @Model.Category</p>
+            <p class="text-muted">Dodano: @Model.PostedDate.ToString("dd.MM.yyyy")</p>
 
-            <h3 class="mt-3">Opis ogłoszenia:</h3>
-            <p>@Model.Description</p>
+            <h3 class="mt-3">@Model.Price.ToString("N2") zł</h3>
+            <p><strong>Lokalizacja:</strong> @Model.Location</p>
 
-            <div class="mt-3">
-                <h4><strong>Cena:</strong> @Model.Price PLN</h4>
-                <h5><strong>Lokalizacja:</strong> @Model.Location</h5>
-                <h5><strong>Telefon:</strong> @Model.PhoneNumber</h5>
-            </div>
-
-            <!-- Szczegóły specyficzne dla kategorii -->
-            @if (Model.Category == "Car" || Model.Category == "Motorcycle" || Model.Category == "Truck")
+            @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
             {
-                <h4 class="mt-4"><strong>Dane pojazdu:</strong></h4>
-                @if (!string.IsNullOrEmpty(Model.VehicleBrand))
-                {
-                    <p><strong>Marka:</strong> @Model.VehicleBrand</p>
-                }
-                @if (!string.IsNullOrEmpty(Model.VehicleModel))
-                {
-                    <p><strong>Model:</strong> @Model.VehicleModel</p>
-                }
-                @if (Model.VehicleYear.HasValue)
-                {
-                    <p><strong>Rok produkcji:</strong> @Model.VehicleYear</p>
-                }
-                @if (Model.VehicleMileage.HasValue)
-                {
-                    <p><strong>Przebieg:</strong> @Model.VehicleMileage km</p>
-                }
+                <p><strong>Telefon:</strong> @Model.PhoneNumber</p>
             }
 
-            @if (Model.Category == "Real Estate")
+            <h4 class="mt-4">Opis</h4>
+            <p style="white-space:pre-wrap;">@Model.Description</p>
+
+            @if (Model.VehicleDetails != null)
             {
-                <h4 class="mt-4"><strong>Szczegóły nieruchomości:</strong></h4>
-                @if (!string.IsNullOrEmpty(Model.PropertyType))
-                {
-                    <p><strong>Typ nieruchomości:</strong> @Model.PropertyType</p>
-                }
-                @if (Model.PropertyArea.HasValue)
-                {
-                    <p><strong>Powierzchnia:</strong> @Model.PropertyArea m²</p>
-                }
-                @if (Model.PropertyRooms.HasValue)
-                {
-                    <p><strong>Liczba pokoi:</strong> @Model.PropertyRooms</p>
-                }
+                <h4 class="mt-4">Dane pojazdu</h4>
+                <p><strong>Marka:</strong> @Model.VehicleDetails.VehicleBrand</p>
+                <p><strong>Model:</strong> @Model.VehicleDetails.VehicleModel</p>
+                <p><strong>Rok:</strong> @Model.VehicleDetails.VehicleYear</p>
+                <p><strong>Przebieg:</strong> @Model.VehicleDetails.VehicleMileage km</p>
             }
 
-            @if (Model.Category == "Job")
+            @if (Model.PropertyDetails != null)
             {
-                <h4 class="mt-4"><strong>Szczegóły pracy:</strong></h4>
-                @if (!string.IsNullOrEmpty(Model.JobTitle))
-                {
-                    <p><strong>Stanowisko:</strong> @Model.JobTitle</p>
-                }
-                @if (!string.IsNullOrEmpty(Model.JobCompany))
-                {
-                    <p><strong>Firma:</strong> @Model.JobCompany</p>
-                }
-                @if (!string.IsNullOrEmpty(Model.JobEmploymentType))
-                {
-                    <p><strong>Rodzaj zatrudnienia:</strong> @Model.JobEmploymentType</p>
-                }
+                <h4 class="mt-4">Dane nieruchomości</h4>
+                <p><strong>Typ:</strong> @Model.PropertyDetails.PropertyType</p>
+                <p><strong>Powierzchnia:</strong> @Model.PropertyDetails.PropertyArea m²</p>
+                <p><strong>Liczba pokoi:</strong> @Model.PropertyDetails.PropertyRooms</p>
             }
 
-            @if (Model.Category == "Electronics")
+            @if (Model.JobDetails != null)
             {
-                <h4 class="mt-4"><strong>Szczegóły elektroniki:</strong></h4>
-                @if (!string.IsNullOrEmpty(Model.ElectronicsType))
-                {
-                    <p><strong>Typ elektroniki:</strong> @Model.ElectronicsType</p>
-                }
-                @if (!string.IsNullOrEmpty(Model.ElectronicsBrand))
-                {
-                    <p><strong>Marka:</strong> @Model.ElectronicsBrand</p>
-                }
-                @if (!string.IsNullOrEmpty(Model.ElectronicsModel))
-                {
-                    <p><strong>Model:</strong> @Model.ElectronicsModel</p>
-                }
+                <h4 class="mt-4">Dane oferty pracy</h4>
+                <p><strong>Stanowisko:</strong> @Model.JobDetails.JobTitle</p>
+                <p><strong>Firma:</strong> @Model.JobDetails.JobCompany</p>
+                <p><strong>Typ zatrudnienia:</strong> @Model.JobDetails.JobEmploymentType</p>
             }
 
-            @if (Model.Category == "Services")
+            @if (Model.ElectronicsDetails != null)
             {
-                <h4 class="mt-4"><strong>Szczegóły usługi:</strong></h4>
-                @if (!string.IsNullOrEmpty(Model.ServiceType))
-                {
-                    <p><strong>Typ usługi:</strong> @Model.ServiceType</p>
-                }
-                @if (!string.IsNullOrEmpty(Model.ServiceDescription))
-                {
-                    <p><strong>Opis usługi:</strong> @Model.ServiceDescription</p>
-                }
+                <h4 class="mt-4">Dane elektroniki</h4>
+                <p><strong>Typ:</strong> @Model.ElectronicsDetails.ElectronicsType</p>
+                <p><strong>Marka:</strong> @Model.ElectronicsDetails.ElectronicsBrand</p>
+                <p><strong>Model:</strong> @Model.ElectronicsDetails.ElectronicsModel</p>
             }
 
-            @if (Model.Category == "Fashion")
+            @if (Model.ServiceDetails != null)
             {
-                <h4 class="mt-4"><strong>Szczegóły mody:</strong></h4>
-                @if (!string.IsNullOrEmpty(Model.FashionType))
-                {
-                    <p><strong>Typ:</strong> @Model.FashionType</p>
-                }
-                @if (!string.IsNullOrEmpty(Model.FashionSize))
-                {
-                    <p><strong>Rozmiar:</strong> @Model.FashionSize</p>
-                }
-                @if (!string.IsNullOrEmpty(Model.FashionColor))
-                {
-                    <p><strong>Kolor:</strong> @Model.FashionColor</p>
-                }
+                <h4 class="mt-4">Dane usługi</h4>
+                <p><strong>Typ:</strong> @Model.ServiceDetails.ServiceType</p>
+                <p><strong>Opis:</strong> @Model.ServiceDetails.ServiceDescription</p>
             }
 
-            @if (Model.Category == "Kids")
+            @if (Model.HomeAndGardenDetails != null)
             {
-                <h4 class="mt-4"><strong>Szczegóły dla dzieci:</strong></h4>
-                @if (!string.IsNullOrEmpty(Model.KidsItemType))
-                {
-                    <p><strong>Typ przedmiotu:</strong> @Model.KidsItemType</p>
-                }
-                @if (!string.IsNullOrEmpty(Model.KidsAgeRange))
-                {
-                    <p><strong>Zakres wieku:</strong> @Model.KidsAgeRange</p>
-                }
+                <h4 class="mt-4">Dom i ogród</h4>
+                <p><strong>Typ:</strong> @Model.HomeAndGardenDetails.HomeAndGardenType</p>
+                <p><strong>Stan:</strong> @Model.HomeAndGardenDetails.HomeAndGardenCondition</p>
             }
 
-            <!-- Przyciski akcji -->
+            @if (Model.FashionDetails != null)
+            {
+                <h4 class="mt-4">Moda</h4>
+                <p><strong>Typ:</strong> @Model.FashionDetails.FashionType</p>
+                <p><strong>Rozmiar:</strong> @Model.FashionDetails.FashionSize</p>
+                <p><strong>Kolor:</strong> @Model.FashionDetails.FashionColor</p>
+            }
+
+            @if (Model.KidsItemDetails != null)
+            {
+                <h4 class="mt-4">Dla dzieci</h4>
+                <p><strong>Typ:</strong> @Model.KidsItemDetails.KidsItemType</p>
+                <p><strong>Wiek:</strong> @Model.KidsItemDetails.KidsAgeRange</p>
+            }
+
             <div class="mt-4">
-                <a href="@Url.Action("Index", "Home")" class="btn" style="background-color:#1d8968; color:white;">Wróć do strony głównej</a>
-
-                <a href="@Url.Action("CategoryAds", "Ads", new { category = Model.Category })" class="btn" style="border: 2px solid #1d8968; color:#1d8968;">Wróć do kategorii</a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Strona główna</a>
+                <a asp-action="CategoryAds" asp-route-category="@Model.Category"
+                   class="btn text-white" style="background-color:#1d8968;">Wróć do kategorii</a>
             </div>
         </div>
     </div>
 </div>
-<script>
-    function confirmDelete(adId) {
-        if (confirm("Are you sure you want to delete this ad?")) {
-            // Redirect to delete action
-            window.location.href = '/Ads/Delete/' + adId;
-        }
-    }
-</script>
