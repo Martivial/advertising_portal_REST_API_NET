@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using Projekt_ASP.Shared.Models;
 using Projekt_ASP.Shared.Models.Ads;
@@ -28,6 +29,14 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.UserName)
+            .IsUnique();
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
 
         modelBuilder.Entity<Ad>()
             .HasOne(a => a.User)

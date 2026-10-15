@@ -1,117 +1,77 @@
-﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
-
+﻿
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TOS</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <script src="~/js/site.js"></script>
-    <style>
-        .logo {
-            font-family: "Kanit", sans-serif;
-            font-weight: 600;
-            font-style: normal;
-            font-size: 2.5rem;
-        }
-
-        .navbar {
-            height: 6.5rem; /* Set a fixed height for the navbar */
-        }
-
-            .navbar .btn {
-                padding: 0.375rem 0.75rem; /* Adjust padding to fit the navbar height */
-            }
-
-            .navbar .navbar-brand {
-                line-height: 60px; /* Center the brand vertically */
-            }
-
-        /* Remove margin and padding to ensure the body fills the entire page */
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa; /* light background color */
-            min-height: 100vh; /* Ensure the body covers the entire height */
-        }
-
-        /* Ensure the footer is always at the bottom */
-        footer {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-
-        /* Make sure the container-fluid occupies the full screen height */
-        .container-fluid.bg-light {
-            background-color: #f8f9fa; /* Same light background */
-            padding: 0;
-            margin: 0;
-            min-height: calc(100vh - 6.5rem); /* Subtract navbar height from the viewport height */
-        }
-
-    </style>
+    <title>@ViewData["Title"] - Ogłoszenia</title>
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body>
+<body class="bg-light">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand fw-bold"
+                   asp-controller="Home" asp-action="Index">
+                    Ogłoszenia
+                </a>
 
-    <nav class="navbar" style="background-color:#1d8968;">
-        <div class="container-fluid">
-            <a class="navbar-brand text-white ms-lg-5 logo" asp-controller="Home" asp-action="Index">TOS</a>
-            <div class="ms-auto d-flex">
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UserId") != null)
-                {
-                    <a class="btn btn-dark text-white me-3" asp-controller="User" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Wyloguj się</a>
-                }
-                else
-                {
-                    <a class="btn btn-dark text-white me-3" asp-controller="User" asp-action="Index"><i class="bi bi-person"></i> Zaloguj się</a>
-                }
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNav"
+                        aria-controls="mainNav"
+                        aria-expanded="false"
+                        aria-label="Pokaż nawigację">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UserId") != null)
-                {
-                    <!-- Link dla zalogowanego użytkownika -->
-                    <a class="btn btn-dark text-white me-3" asp-controller="Ads" asp-action="Create" style="font-size: 1rem;">
-                        <i class="bi bi-plus"></i> Dodaj ogłoszenie
-                    </a>
-                }
-                else
-                {
-                    <!-- Link dla niezalogowanego użytkownika -->
-                    <a class="btn btn-dark text-white me-3" asp-controller="User" asp-action="Index" style="font-size: 1rem;">
-                        <i class="bi bi-plus"></i> Dodaj ogłoszenie
-                    </a>
-                }
-
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UserId") != null)
-                {
-                    <a class="btn btn-dark text-white me-3" asp-controller="Ads" asp-action="MyAds"><i class="bi bi-file-earmark-text"></i> Moje ogłoszenia</a>
-                }
-
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UserName") == "admin")
-                {
-                    <!-- Link do zakładki Użytkownicy tylko dla admina -->
-                    <a class="btn btn-dark text-white me-3" asp-controller="User" asp-action="AllUsers"><i class="bi bi-people"></i> Użytkownicy</a>
-                }
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Ads" asp-action="Index">
+                                Ogłoszenia
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Ads" asp-action="Create">
+                                Dodaj ogłoszenie
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="User" asp-action="Index">
+                                Logowanie
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-success btn-sm"
+                               asp-controller="User" asp-action="Register">
+                                Załóż konto
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
-    <!-- Ensure background color extends over the entire screen with no gaps -->
-    <div class="container-fluid bg-light" style="width:100%; margin:0; padding:0;">
-        @RenderBody()
-    </div>
+        </nav>
+    </header>
 
-    <!-- Footer -->
-    <footer class="text-center bg-light">
-        <p>&copy; 2024 - All rights reserved.</p>
+    <main class="min-vh-100">
+        @RenderBody()
+    </main>
+
+    <footer class="border-top bg-white py-4 mt-5">
+        <div class="container text-secondary small">
+            © @DateTime.Now.Year — Portal ogłoszeniowy
+        </div>
     </footer>
 
-    @RenderSection("Scripts", required: false)
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+```
