@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projekt_ASP.API.Data;
-using Projekt_ASP.Shared.Models;
 using Projekt_ASP.Shared.Models.Ads;
 
 namespace Projekt_ASP.API.Controllers;
@@ -19,88 +18,56 @@ public class AdsController : ControllerBase
     }
 
     // GET: api/ads
-    // Pobiera wszystkie ogłoszenia
+    // Pobiera wszystkie ogłoszenia wraz ze zdjęciami.
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Ad>>> GetAds()
     {
         var ads = await _context.Ads
             .AsNoTracking()
             .Include(a => a.Images)
-            .Include(a => a.VehicleDetails)
-            .Include(a => a.PropertyDetails)
-            .Include(a => a.JobDetails)
-            .Include(a => a.ElectronicsDetails)
-            .Include(a => a.ServiceDetails)
-            .Include(a => a.HomeAndGardenDetails)
-            .Include(a => a.FashionDetails)
-            .Include(a => a.KidsItemDetails)
             .ToListAsync();
 
         return Ok(ads);
     }
 
     // GET: api/ads/5
-    // Pobiera jedno ogłoszenie
+    // Pobiera jedno ogłoszenie wraz ze zdjęciami.
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Ad>> GetAd(int id)
     {
         var ad = await _context.Ads
             .AsNoTracking()
             .Include(a => a.Images)
-            .Include(a => a.VehicleDetails)
-            .Include(a => a.PropertyDetails)
-            .Include(a => a.JobDetails)
-            .Include(a => a.ElectronicsDetails)
-            .Include(a => a.ServiceDetails)
-            .Include(a => a.HomeAndGardenDetails)
-            .Include(a => a.FashionDetails)
-            .Include(a => a.KidsItemDetails)
             .FirstOrDefaultAsync(a => a.Id == id);
 
         if (ad == null)
-            return NotFound(new { message = $"Nie znaleziono ogłoszenia o ID {id}." });
+        {
+            return NotFound(new
+            {
+                message = $"Nie znaleziono ogłoszenia o ID {id}."
+            });
+        }
 
         return Ok(ad);
     }
 
     // POST: api/ads
-    // Dodaje nowe ogłoszenie
+    // Dodaje nowe ogłoszenie.
     [HttpPost]
     public async Task<ActionResult<Ad>> CreateAd([FromBody] Ad ad)
     {
-        // Nie dodawaj użytkownika ponownie jako nowego rekordu.
-        ad.User = null!;
+        // Użytkownik jest powiązany przez UserId.
+        // Nie dodajemy obiektu User jako nowego rekordu.
+        ad.User = null;
 
-        // Ustaw prawidłowe powiązania dla danych zależnych.
+        // Powiązujemy zdjęcia z nowym ogłoszeniem.
         if (ad.Images != null)
         {
             foreach (var image in ad.Images)
+            {
                 image.Ad = ad;
+            }
         }
-
-        if (ad.VehicleDetails != null)
-            ad.VehicleDetails.Ad = ad;
-
-        if (ad.PropertyDetails != null)
-            ad.PropertyDetails.Ad = ad;
-
-        if (ad.JobDetails != null)
-            ad.JobDetails.Ad = ad;
-
-        if (ad.ElectronicsDetails != null)
-            ad.ElectronicsDetails.Ad = ad;
-
-        if (ad.ServiceDetails != null)
-            ad.ServiceDetails.Ad = ad;
-
-        if (ad.HomeAndGardenDetails != null)
-            ad.HomeAndGardenDetails.Ad = ad;
-
-        if (ad.FashionDetails != null)
-            ad.FashionDetails.Ad = ad;
-
-        if (ad.KidsItemDetails != null)
-            ad.KidsItemDetails.Ad = ad;
 
         _context.Ads.Add(ad);
 
@@ -112,7 +79,7 @@ public class AdsController : ControllerBase
         {
             return BadRequest(new
             {
-                message = "Nie udało się zapisać ogłoszenia. Sprawdź UserId i dane powiązane."
+                message = "Nie udało się zapisać ogłoszenia. Sprawdź UserId i dane zdjęć."
             });
         }
 
@@ -123,9 +90,11 @@ public class AdsController : ControllerBase
     }
 
     // PUT: api/ads/5
-    // Aktualizuje podstawowe pola ogłoszenia
+    // Aktualizuje podstawowe pola ogłoszenia.
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateAd(int id, [FromBody] Ad updatedAd)
+    public async Task<IActionResult> UpdateAd(
+        int id,
+        [FromBody] Ad updatedAd)
     {
         if (id != updatedAd.Id)
         {
@@ -138,27 +107,43 @@ public class AdsController : ControllerBase
         var existingAd = await _context.Ads.FindAsync(id);
 
         if (existingAd == null)
-            return NotFound(new { message = "Nie znaleziono ogłoszenia." });
+        {
+            return NotFound(new
+            {
+                message = "Nie znaleziono ogłoszenia."
+            });
+        }
 
-        // Aktualizuje pola proste, bez nadpisywania nawigacji.
-        _context.Entry(existingAd).CurrentValues.SetValues(updatedAd);
+        // Aktualizujemy tylko pola edytowane w formularzu.
+        existingAd.Title = updatedAd.Title;
+        existingAd.Description = updatedAd.Description;
+        existingAd.Category = updatedAd.Category;
+        existingAd.Price = updatedAd.Price;
+        existingAd.Location = updatedAd.Location;
+        existingAd.PhoneNumber = updatedAd.PhoneNumber;
 
-        // Nie zmieniamy powiązanych zdjęć ani szczegółów kategorii
-        // w tym endpointcie.
+        // Nie zmieniamy UserId, PostedDate ani zdjęć.
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
     // DELETE: api/ads/5
-    // Usuwa ogłoszenie
+    // Usuwa ogłoszenie.
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAd(int id)
     {
-        var ad = await _context.Ads.FindAsync(id);
+        var ad = await _context.Ads
+            .Include(a => a.Images)
+            .FirstOrDefaultAsync(a => a.Id == id);
 
         if (ad == null)
-            return NotFound(new { message = "Nie znaleziono ogłoszenia." });
+        {
+            return NotFound(new
+            {
+                message = "Nie znaleziono ogłoszenia."
+            });
+        }
 
         _context.Ads.Remove(ad);
         await _context.SaveChangesAsync();

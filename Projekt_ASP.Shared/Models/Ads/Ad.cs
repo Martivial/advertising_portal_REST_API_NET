@@ -1,6 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
-using Projekt_ASP.Shared.Models.Ads;
+using System.Text.Json.Serialization;
 
 namespace Projekt_ASP.Shared.Models.Ads
 {
@@ -32,29 +32,13 @@ namespace Projekt_ASP.Shared.Models.Ads
         [MaxLength(30)]
         public string? PhoneNumber { get; set; }
 
-        // Użytkownik, który dodał ogłoszenie
+        // ID użytkownika, który dodał ogłoszenie
         [Required]
         public int UserId { get; set; }
 
-        [System.Text.Json.Serialization.JsonIgnore]
+        // Nawigacja do użytkownika, pomijana w JSON
+        [JsonIgnore]
         public User? User { get; set; }
-
-        // Szczegóły konkretnej kategorii
-        public VehicleDetails? VehicleDetails { get; set; }
-
-        public PropertyDetails? PropertyDetails { get; set; }
-
-        public JobDetails? JobDetails { get; set; }
-
-        public ElectronicsDetails? ElectronicsDetails { get; set; }
-
-        public ServiceDetails? ServiceDetails { get; set; }
-
-        public HomeAndGardenDetails? HomeAndGardenDetails { get; set; }
-
-        public FashionDetails? FashionDetails { get; set; }
-
-        public KidsItemDetails? KidsItemDetails { get; set; }
 
         // Zdjęcia ogłoszenia
         public ICollection<AdImage> Images { get; set; }

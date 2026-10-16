@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +22,7 @@ namespace Projekt_ASP.Controllers
         public IActionResult Create()
         {
             if (HttpContext.Session.GetInt32("UserId") == null)
-            {
                 return RedirectToAction("Login", "User");
-            }
 
             return View(new Ad());
         }
@@ -36,16 +35,12 @@ namespace Projekt_ASP.Controllers
             int? userId = HttpContext.Session.GetInt32("UserId");
 
             if (userId == null)
-            {
                 return RedirectToAction("Login", "User");
-            }
 
-            RemoveUnusedValidation();
+            RemoveServerManagedValidation();
 
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
             var ad = new Ad
             {
@@ -99,9 +94,7 @@ namespace Projekt_ASP.Controllers
                 var ad = await _api.GetAdAsync(id);
 
                 if (ad == null)
-                {
                     return NotFound();
-                }
 
                 return View(ad);
             }
@@ -120,23 +113,17 @@ namespace Projekt_ASP.Controllers
             int? userId = HttpContext.Session.GetInt32("UserId");
 
             if (userId == null)
-            {
                 return RedirectToAction("Login", "User");
-            }
 
             try
             {
                 var ad = await _api.GetAdAsync(id);
 
                 if (ad == null)
-                {
                     return NotFound();
-                }
 
                 if (ad.UserId != userId.Value)
-                {
                     return Forbid();
-                }
 
                 return View(ad);
             }
@@ -156,37 +143,27 @@ namespace Projekt_ASP.Controllers
             int? userId = HttpContext.Session.GetInt32("UserId");
 
             if (userId == null)
-            {
                 return RedirectToAction("Login", "User");
-            }
 
             if (id != model.Id)
-            {
                 return BadRequest();
-            }
 
-            RemoveUnusedValidation();
+            RemoveServerManagedValidation();
 
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
             try
             {
                 var existingAd = await _api.GetAdAsync(id);
 
                 if (existingAd == null)
-                {
                     return NotFound();
-                }
 
                 if (existingAd.UserId != userId.Value)
-                {
                     return Forbid();
-                }
 
-                // Zmieniamy tylko pola formularza.
+                // Aktualizujemy wyłącznie pola edytowane w formularzu.
                 existingAd.Title = model.Title.Trim();
                 existingAd.Description =
                     model.Description?.Trim() ?? string.Empty;
@@ -201,9 +178,7 @@ namespace Projekt_ASP.Controllers
                 bool updated = await _api.UpdateAdAsync(id, existingAd);
 
                 if (!updated)
-                {
                     return NotFound();
-                }
 
                 TempData["Success"] = "Ogłoszenie zostało zaktualizowane!";
 
@@ -227,9 +202,7 @@ namespace Projekt_ASP.Controllers
             int? userId = HttpContext.Session.GetInt32("UserId");
 
             if (userId == null)
-            {
                 return RedirectToAction("Login", "User");
-            }
 
             try
             {
@@ -242,9 +215,7 @@ namespace Projekt_ASP.Controllers
                 }
 
                 if (ad.UserId != userId.Value)
-                {
                     return Forbid();
-                }
 
                 bool deleted = await _api.DeleteAdAsync(id);
 
@@ -267,22 +238,15 @@ namespace Projekt_ASP.Controllers
             }
         }
 
-        // Pomija walidację pól, których użytkownik nie edytuje.
-        private void RemoveUnusedValidation()
+        // Pomija walidację właściwości ustawianych przez aplikację
+        // lub obsługiwanych poza formularzem.
+        private void RemoveServerManagedValidation()
         {
             ModelState.Remove(nameof(Ad.Id));
             ModelState.Remove(nameof(Ad.UserId));
             ModelState.Remove(nameof(Ad.PostedDate));
             ModelState.Remove(nameof(Ad.User));
             ModelState.Remove(nameof(Ad.Images));
-            ModelState.Remove(nameof(Ad.VehicleDetails));
-            ModelState.Remove(nameof(Ad.PropertyDetails));
-            ModelState.Remove(nameof(Ad.JobDetails));
-            ModelState.Remove(nameof(Ad.ElectronicsDetails));
-            ModelState.Remove(nameof(Ad.ServiceDetails));
-            ModelState.Remove(nameof(Ad.HomeAndGardenDetails));
-            ModelState.Remove(nameof(Ad.FashionDetails));
-            ModelState.Remove(nameof(Ad.KidsItemDetails));
         }
     }
 }

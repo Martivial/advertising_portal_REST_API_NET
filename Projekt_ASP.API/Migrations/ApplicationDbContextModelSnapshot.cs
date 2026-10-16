@@ -8,7 +8,7 @@ using Projekt_ASP.API.Data;
 
 #nullable disable
 
-namespace Projekt_ASP.API.Data.Migrations
+namespace Projekt_ASP.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot

@@ -9,10 +9,10 @@ using Projekt_ASP.API.Data;
 
 #nullable disable
 
-namespace Projekt_ASP.API.Data.Migrations
+namespace Projekt_ASP.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261015112725_InitialCreate")]
+    [Migration("20261016104722_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -321,19 +321,14 @@ namespace Projekt_ASP.API.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ConfirmPassword")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -341,6 +336,12 @@ namespace Projekt_ASP.API.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
