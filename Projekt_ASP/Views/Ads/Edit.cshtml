@@ -1,219 +1,89 @@
-﻿
-@model Projekt_ASP.Models.Ads.Ad
+﻿```cshtml
+@model Projekt_ASP.Shared.Models.Ads.Ad
 
 @{
     ViewData["Title"] = "Edytuj ogłoszenie";
 }
 
-<div class="container mt-5 mb-5" style="max-width: 750px;">
-    <h1 class="text-center mb-4">Edytuj ogłoszenie</h1>
+<div class="container py-4" style="max-width: 760px;">
+    <div class="card p-4 p-md-5">
+        <h1 class="mb-2">Edytuj ogłoszenie</h1>
+        <p class="text-muted mb-4">
+            Zmień dane ogłoszenia i zapisz poprawki.
+        </p>
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-    }
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-    }
+        <form asp-controller="Ads"
+              asp-action="Edit"
+              asp-route-id="@Model.Id"
+              method="post">
 
-    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="All" class="text-danger"></div>
+            @Html.AntiForgeryToken()
 
-        <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="UserId" />
-        <input type="hidden" asp-for="Category" />
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
 
-        <div class="mb-3">
-            <label class="form-label">Kategoria</label>
-            <input value="@Model.Category" class="form-control" readonly />
-        </div>
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Tytuł</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title"
+                      class="text-danger"></span>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="Title" class="form-label">Tytuł</label>
-            <input asp-for="Title" class="form-control" />
-            <span asp-validation-for="Title" class="text-danger"></span>
-        </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Opis</label>
+                <textarea asp-for="Description"
+                          class="form-control"
+                          rows="5"></textarea>
+                <span asp-validation-for="Description"
+                      class="text-danger"></span>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label">Opis</label>
-            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
+            <div class="mb-3">
+                <label asp-for="Category" class="form-label">Kategoria</label>
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category"
+                      class="text-danger"></span>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="Price" class="form-label">Cena</label>
-            <input asp-for="Price" type="number" min="0" step="0.01" class="form-control" />
-            <span asp-validation-for="Price" class="text-danger"></span>
-        </div>
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label">Cena (zł)</label>
+                <input asp-for="Price"
+                       type="number"
+                       step="0.01"
+                       min="0"
+                       class="form-control" />
+                <span asp-validation-for="Price"
+                      class="text-danger"></span>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="Location" class="form-label">Lokalizacja</label>
-            <input asp-for="Location" class="form-control" />
-            <span asp-validation-for="Location" class="text-danger"></span>
-        </div>
+            <div class="mb-3">
+                <label asp-for="Location" class="form-label">Lokalizacja</label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location"
+                      class="text-danger"></span>
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="PhoneNumber" class="form-label">Telefon</label>
-            <input asp-for="PhoneNumber" class="form-control" />
-        </div>
+            <div class="mb-4">
+                <label asp-for="PhoneNumber" class="form-label">
+                    Numer telefonu
+                </label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber"
+                      class="text-danger"></span>
+            </div>
 
-        @if (Model.VehicleDetails != null)
-        {
-            <h4>Dane pojazdu</h4>
-            <div class="mb-3">
-                <label class="form-label">Marka</label>
-                <input name="VehicleDetails.VehicleBrand" value="@Model.VehicleDetails.VehicleBrand" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Model</label>
-                <input name="VehicleDetails.VehicleModel" value="@Model.VehicleDetails.VehicleModel" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Rok produkcji</label>
-                <input name="VehicleDetails.VehicleYear" value="@Model.VehicleDetails.VehicleYear" type="number" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Przebieg</label>
-                <input name="VehicleDetails.VehicleMileage" value="@Model.VehicleDetails.VehicleMileage" type="number" class="form-control" />
-            </div>
-        }
+            <div class="d-flex flex-wrap gap-2">
+                <button type="submit" class="btn-primary-custom">
+                    <i class="bi bi-check-lg"></i>
+                    Zapisz zmiany
+                </button>
 
-        @if (Model.PropertyDetails != null)
-        {
-            <h4>Dane nieruchomości</h4>
-            <div class="mb-3">
-                <label class="form-label">Typ nieruchomości</label>
-                <input name="PropertyDetails.PropertyType" value="@Model.PropertyDetails.PropertyType" class="form-control" />
+                <a asp-controller="User"
+                   asp-action="Profile"
+                   class="btn btn-outline-secondary">
+                    Anuluj
+                </a>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Powierzchnia</label>
-                <input name="PropertyDetails.PropertyArea" value="@Model.PropertyDetails.PropertyArea" type="number" step="0.01" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Liczba pokoi</label>
-                <input name="PropertyDetails.PropertyRooms" value="@Model.PropertyDetails.PropertyRooms" type="number" class="form-control" />
-            </div>
-        }
-
-        @if (Model.JobDetails != null)
-        {
-            <h4>Dane oferty pracy</h4>
-            <div class="mb-3">
-                <label class="form-label">Stanowisko</label>
-                <input name="JobDetails.JobTitle" value="@Model.JobDetails.JobTitle" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Firma</label>
-                <input name="JobDetails.JobCompany" value="@Model.JobDetails.JobCompany" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Typ zatrudnienia</label>
-                <input name="JobDetails.JobEmploymentType" value="@Model.JobDetails.JobEmploymentType" class="form-control" />
-            </div>
-        }
-
-        @if (Model.ElectronicsDetails != null)
-        {
-            <h4>Dane elektroniki</h4>
-            <div class="mb-3">
-                <label class="form-label">Typ</label>
-                <input name="ElectronicsDetails.ElectronicsType" value="@Model.ElectronicsDetails.ElectronicsType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Marka</label>
-                <input name="ElectronicsDetails.ElectronicsBrand" value="@Model.ElectronicsDetails.ElectronicsBrand" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Model</label>
-                <input name="ElectronicsDetails.ElectronicsModel" value="@Model.ElectronicsDetails.ElectronicsModel" class="form-control" />
-            </div>
-        }
-
-        @if (Model.ServiceDetails != null)
-        {
-            <h4>Dane usługi</h4>
-            <div class="mb-3">
-                <label class="form-label">Typ usługi</label>
-                <input name="ServiceDetails.ServiceType" value="@Model.ServiceDetails.ServiceType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Opis usługi</label>
-                <textarea name="ServiceDetails.ServiceDescription" class="form-control">@Model.ServiceDetails.ServiceDescription</textarea>
-            </div>
-        }
-
-        @if (Model.HomeAndGardenDetails != null)
-        {
-            <h4>Dom i ogród</h4>
-            <div class="mb-3">
-                <label class="form-label">Typ artykułu</label>
-                <input name="HomeAndGardenDetails.HomeAndGardenType" value="@Model.HomeAndGardenDetails.HomeAndGardenType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Stan</label>
-                <input name="HomeAndGardenDetails.HomeAndGardenCondition" value="@Model.HomeAndGardenDetails.HomeAndGardenCondition" class="form-control" />
-            </div>
-        }
-
-        @if (Model.FashionDetails != null)
-        {
-            <h4>Dane odzieży</h4>
-            <div class="mb-3">
-                <label class="form-label">Typ</label>
-                <input name="FashionDetails.FashionType" value="@Model.FashionDetails.FashionType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Rozmiar</label>
-                <input name="FashionDetails.FashionSize" value="@Model.FashionDetails.FashionSize" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Kolor</label>
-                <input name="FashionDetails.FashionColor" value="@Model.FashionDetails.FashionColor" class="form-control" />
-            </div>
-        }
-
-        @if (Model.KidsItemDetails != null)
-        {
-            <h4>Dane artykułu dziecięcego</h4>
-            <div class="mb-3">
-                <label class="form-label">Typ artykułu</label>
-                <input name="KidsItemDetails.KidsItemType" value="@Model.KidsItemDetails.KidsItemType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Przedział wiekowy</label>
-                <input name="KidsItemDetails.KidsAgeRange" value="@Model.KidsItemDetails.KidsAgeRange" class="form-control" />
-            </div>
-        }
-
-        <h4 class="mt-4">Zdjęcia</h4>
-        @if (Model.Images != null)
-        {
-            <div class="row">
-                @foreach (var image in Model.Images)
-                {
-                    if (image.ImageData != null && image.ImageData.Length > 0)
-                    {
-                        <div class="col-md-4 mb-3">
-                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(image.ImageData)"
-                                 class="img-thumbnail" alt="Zdjęcie ogłoszenia" />
-                        </div>
-                    }
-                }
-            </div>
-        }
-
-        <div class="mb-3">
-            <label for="newImages" class="form-label">Dodaj zdjęcia</label>
-            <input type="file" id="newImages" name="newImages" multiple accept="image/*" class="form-control" />
-        </div>
-
-        <button type="submit" class="btn text-white" style="background-color:#1d8968;">Zapisz zmiany</button>
-        <a asp-action="MyAds" class="btn btn-secondary">Anuluj</a>
-    </form>
+        </form>
+    </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

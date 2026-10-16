@@ -1,205 +1,408 @@
 ﻿
-@model Projekt_ASP.Models.Ads.Ad
+@model Projekt_ASP.Shared.Models.Ads.Ad
 
 @{
     ViewData["Title"] = "Dodaj ogłoszenie";
 }
 
-<div class="container mt-5 mb-5" style="max-width: 750px;">
-    <h1 class="text-center mb-4">Dodaj ogłoszenie</h1>
+<style>
+    .create-page {
+        --primary: #176EC4;
+        --primary-dark: #12569a;
+        --accent: #038678;
+        --text: #203047;
+        --muted: #718096;
+        --border: #e2e8f0;
 
-    <form asp-action="Create" method="post" enctype="multipart/form-data">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="All" class="text-danger"></div>
+        max-width: 940px;
+        margin: 0 auto;
+        padding: 32px 16px 56px;
+        color: var(--text);
+    }
 
-        <div class="mb-3">
-            <label asp-for="Category" class="form-label">Kategoria</label>
-            <select asp-for="Category" id="Category" class="form-select" required>
-                <option value="">Wybierz kategorię</option>
-                <option value="Motoryzacja">Motoryzacja</option>
-                <option value="Nieruchomości">Nieruchomości</option>
-                <option value="Praca">Praca</option>
-                <option value="Elektronika">Elektronika</option>
-                <option value="Usługi">Usługi</option>
-                <option value="Dom i ogród">Dom i ogród</option>
-                <option value="Moda">Moda</option>
-                <option value="Dla dzieci">Dla dzieci</option>
-            </select>
-            <span asp-validation-for="Category" class="text-danger"></span>
-        </div>
+    .create-header {
+        margin-bottom: 26px;
+    }
 
-        <div class="mb-3">
-            <label asp-for="Title" class="form-label">Tytuł</label>
-            <input asp-for="Title" class="form-control" required />
-            <span asp-validation-for="Title" class="text-danger"></span>
-        </div>
+    .create-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        margin-bottom: 14px;
+        color: var(--accent);
+        background: #e8f7f4;
+        border-radius: 999px;
+        font-size: .85rem;
+        font-weight: 600;
+    }
 
-        <div class="mb-3">
-            <label asp-for="Description" class="form-label">Opis</label>
-            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
+    .create-header h1 {
+        margin-bottom: 10px;
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        font-weight: 750;
+        letter-spacing: -1px;
+    }
 
-        <div class="mb-3">
-            <label asp-for="Price" class="form-label">Cena (zł)</label>
-            <input asp-for="Price" type="number" min="0" step="0.01" class="form-control" required />
-            <span asp-validation-for="Price" class="text-danger"></span>
-        </div>
+    .create-header p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+    }
 
-        <div class="mb-3">
-            <label asp-for="Location" class="form-label">Lokalizacja</label>
-            <input asp-for="Location" class="form-control" required />
-            <span asp-validation-for="Location" class="text-danger"></span>
-        </div>
+    .create-card {
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        box-shadow: 0 12px 36px rgba(24, 52, 84, .07);
+    }
 
-        <div class="mb-3">
-            <label asp-for="PhoneNumber" class="form-label">Telefon</label>
-            <input asp-for="PhoneNumber" class="form-control" />
-            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-        </div>
+    .create-card-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 22px 28px;
+        background: linear-gradient(110deg, #f0f7ff, #effaf8);
+        border-bottom: 1px solid var(--border);
+    }
 
-        <hr />
-        <h4>Szczegóły kategorii</h4>
-        <p class="text-muted">Wypełnij pola odpowiednie dla wybranej kategorii.</p>
+    .create-icon {
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        color: #fff;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 15px;
+        font-size: 1.35rem;
+    }
 
-        <div class="category-fields" data-category="Motoryzacja">
-            <div class="mb-3">
-                <label class="form-label">Marka pojazdu</label>
-                <input name="VehicleDetails.VehicleBrand" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Model pojazdu</label>
-                <input name="VehicleDetails.VehicleModel" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Rok produkcji</label>
-                <input name="VehicleDetails.VehicleYear" type="number" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Przebieg (km)</label>
-                <input name="VehicleDetails.VehicleMileage" type="number" class="form-control" />
-            </div>
-        </div>
+    .create-card-header h2 {
+        margin: 0 0 4px;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
 
-        <div class="category-fields" data-category="Nieruchomości">
-            <div class="mb-3">
-                <label class="form-label">Typ nieruchomości</label>
-                <input name="PropertyDetails.PropertyType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Powierzchnia (m²)</label>
-                <input name="PropertyDetails.PropertyArea" type="number" step="0.01" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Liczba pokoi</label>
-                <input name="PropertyDetails.PropertyRooms" type="number" class="form-control" />
-            </div>
-        </div>
+    .create-card-header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: .9rem;
+    }
 
-        <div class="category-fields" data-category="Praca">
-            <div class="mb-3">
-                <label class="form-label">Stanowisko</label>
-                <input name="JobDetails.JobTitle" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Firma</label>
-                <input name="JobDetails.JobCompany" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Typ zatrudnienia</label>
-                <input name="JobDetails.JobEmploymentType" class="form-control" />
-            </div>
-        </div>
+    .create-form {
+        padding: 28px;
+    }
 
-        <div class="category-fields" data-category="Elektronika">
-            <div class="mb-3">
-                <label class="form-label">Typ elektroniki</label>
-                <input name="ElectronicsDetails.ElectronicsType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Marka</label>
-                <input name="ElectronicsDetails.ElectronicsBrand" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Model</label>
-                <input name="ElectronicsDetails.ElectronicsModel" class="form-control" />
-            </div>
-        </div>
+    .form-section-title {
+        margin: 0 0 20px;
+        font-size: 1rem;
+        font-weight: 700;
+    }
 
-        <div class="category-fields" data-category="Usługi">
-            <div class="mb-3">
-                <label class="form-label">Typ usługi</label>
-                <input name="ServiceDetails.ServiceType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Opis usługi</label>
-                <textarea name="ServiceDetails.ServiceDescription" class="form-control"></textarea>
-            </div>
-        </div>
+    .create-form .form-label {
+        margin-bottom: 8px;
+        color: #344256;
+        font-size: .92rem;
+        font-weight: 600;
+    }
 
-        <div class="category-fields" data-category="Dom i ogród">
-            <div class="mb-3">
-                <label class="form-label">Typ artykułu</label>
-                <input name="HomeAndGardenDetails.HomeAndGardenType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Stan</label>
-                <input name="HomeAndGardenDetails.HomeAndGardenCondition" class="form-control" />
-            </div>
-        </div>
+    .create-form .form-control,
+    .create-form .form-select {
+        min-height: 48px;
+        padding: 11px 14px;
+        border: 1px solid #dce4ed;
+        border-radius: 11px;
+        background-color: #fff;
+        color: var(--text);
+        box-shadow: none;
+        transition: border-color .2s, box-shadow .2s;
+    }
 
-        <div class="category-fields" data-category="Moda">
-            <div class="mb-3">
-                <label class="form-label">Typ odzieży</label>
-                <input name="FashionDetails.FashionType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Rozmiar</label>
-                <input name="FashionDetails.FashionSize" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Kolor</label>
-                <input name="FashionDetails.FashionColor" class="form-control" />
-            </div>
-        </div>
+    .create-form textarea.form-control {
+        min-height: 140px;
+        resize: vertical;
+    }
 
-        <div class="category-fields" data-category="Dla dzieci">
-            <div class="mb-3">
-                <label class="form-label">Typ artykułu</label>
-                <input name="KidsItemDetails.KidsItemType" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Przedział wiekowy</label>
-                <input name="KidsItemDetails.KidsAgeRange" class="form-control" />
-            </div>
-        </div>
+    .create-form .form-control:focus,
+    .create-form .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(23, 110, 196, .11);
+    }
 
-        <div class="mb-4">
-            <label for="images" class="form-label">Zdjęcia</label>
-            <input type="file" id="images" name="images" class="form-control" multiple accept="image/*" />
-        </div>
+    .field-hint {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: .82rem;
+    }
 
-        <button type="submit" class="btn text-white" style="background-color:#1d8968;">
-            Dodaj ogłoszenie
-        </button>
-        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Anuluj</a>
-    </form>
-</div>
+    .create-divider {
+        height: 1px;
+        margin: 26px 0;
+        background: var(--border);
+    }
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        const categorySelect = document.getElementById("Category");
-        const categoryFields = document.querySelectorAll(".category-fields");
+    .create-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-top: 28px;
+    }
 
-        function updateCategoryFields() {
-            categoryFields.forEach(section => {
-                section.style.display =
-                    section.dataset.category === categorySelect.value ? "block" : "none";
-            });
+    .btn-publish {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 48px;
+        padding: 12px 22px;
+        color: #fff;
+        background: linear-gradient(110deg, var(--primary), var(--accent));
+        border: 0;
+        border-radius: 11px;
+        font-weight: 650;
+        transition: transform .2s, box-shadow .2s;
+    }
+
+    .btn-publish:hover {
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 7px 18px rgba(23, 110, 196, .22);
+    }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 48px;
+        padding: 12px 20px;
+        color: #475569;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .btn-cancel:hover {
+        color: var(--primary);
+        background: #f7faff;
+    }
+
+    .create-validation {
+        padding: 14px 16px;
+        margin-bottom: 22px;
+        background: #fff4f4;
+        border: 1px solid #fecaca;
+        border-radius: 11px;
+    }
+
+    .create-validation:empty {
+        display: none;
+    }
+
+    .create-validation ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .required-mark {
+        color: #dc3545;
+    }
+
+    @@media (max-width: 576px) {
+        .create-page {
+            padding: 22px 10px 36px;
         }
 
-        categorySelect.addEventListener("change", updateCategoryFields);
-        updateCategoryFields();
-    </script>
-}
+        .create-card-header {
+            padding: 18px;
+        }
+
+        .create-form {
+            padding: 20px 18px;
+        }
+
+        .create-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .create-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="create-page">
+    <header class="create-header">
+        <div class="create-label">
+            <i class="bi bi-megaphone-fill"></i>
+            Twoja oferta, nowi odbiorcy
+        </div>
+
+        <h1>Dodaj ogłoszenie</h1>
+
+        <p>
+            Uzupełnij informacje o swojej ofercie i opublikuj ogłoszenie,
+            aby inni mogli je znaleźć.
+        </p>
+    </header>
+
+    <section class="create-card">
+        <div class="create-card-header">
+            <div class="create-icon">
+                <i class="bi bi-pencil-square"></i>
+            </div>
+
+            <div>
+                <h2>Informacje o ogłoszeniu</h2>
+                <p>Pola oznaczone gwiazdką są wymagane przez formularz.</p>
+            </div>
+        </div>
+
+        <form asp-controller="Ads"
+              asp-action="Create"
+              method="post"
+              class="create-form">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All"
+                 class="create-validation text-danger"></div>
+
+            <h3 class="form-section-title">
+                <i class="bi bi-card-text me-2" style="color:#176EC4"></i>
+                Opis oferty
+            </h3>
+
+            <div class="mb-4">
+                <label asp-for="Title" class="form-label">
+                    Tytuł ogłoszenia <span class="required-mark">*</span>
+                </label>
+
+                <input asp-for="Title"
+                       class="form-control"
+                       maxlength="100"
+                       placeholder="Np. Rower miejski w świetnym stanie" />
+
+                <span asp-validation-for="Title" class="text-danger"></span>
+                <div class="field-hint">
+                    Krótki i konkretny tytuł pomoże zainteresowanym znaleźć ofertę.
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Category" class="form-label">
+                    Kategoria <span class="required-mark">*</span>
+                </label>
+
+                <select asp-for="Category" class="form-select">
+                    <option value="">Wybierz kategorię</option>
+                    <option value="Motoryzacja">Motoryzacja</option>
+                    <option value="Nieruchomości">Nieruchomości</option>
+                    <option value="Praca">Praca</option>
+                    <option value="Elektronika">Elektronika</option>
+                    <option value="Usługi">Usługi</option>
+                    <option value="Dom i ogród">Dom i ogród</option>
+                    <option value="Moda">Moda</option>
+                    <option value="Dla dzieci">Dla dzieci</option>
+                </select>
+
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Description" class="form-label">
+                    Opis
+                </label>
+
+                <textarea asp-for="Description"
+                          class="form-control"
+                          maxlength="500"
+                          rows="5"
+                          placeholder="Opisz stan produktu, najważniejsze cechy lub warunki oferty..."></textarea>
+
+                <span asp-validation-for="Description" class="text-danger"></span>
+                <div class="field-hint">Maksymalnie 500 znaków.</div>
+            </div>
+
+            <div class="create-divider"></div>
+
+            <h3 class="form-section-title">
+                <i class="bi bi-geo-alt me-2" style="color:#038678"></i>
+                Cena i kontakt
+            </h3>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Price" class="form-label">
+                        Cena (zł) <span class="required-mark">*</span>
+                    </label>
+
+                    <div class="input-group">
+                        <input asp-for="Price"
+                               type="number"
+                               step="0.01"
+                               min="0.01"
+                               class="form-control"
+                               placeholder="0,00" />
+
+                        <span class="input-group-text">zł</span>
+                    </div>
+
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Location" class="form-label">
+                        Lokalizacja <span class="required-mark">*</span>
+                    </label>
+
+                    <input asp-for="Location"
+                           class="form-control"
+                           maxlength="100"
+                           placeholder="Np. Warszawa" />
+
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="PhoneNumber" class="form-label">
+                        Numer telefonu
+                    </label>
+
+                    <input asp-for="PhoneNumber"
+                           type="tel"
+                           class="form-control"
+                           maxlength="30"
+                           placeholder="Np. 500 600 700" />
+
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    <div class="field-hint">
+                        To pole jest opcjonalne.
+                    </div>
+                </div>
+            </div>
+
+            <div class="create-divider"></div>
+
+            <div class="create-actions">
+                <button type="submit" class="btn btn-publish">
+                    <i class="bi bi-send-fill"></i>
+                    Opublikuj ogłoszenie
+                </button>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-cancel">
+                    <i class="bi bi-arrow-left"></i>
+                    Anuluj
+                </a>
+            </div>
+        </form>
+    </section>
+</div>

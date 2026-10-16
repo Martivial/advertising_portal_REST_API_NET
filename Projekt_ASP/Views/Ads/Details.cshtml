@@ -1,134 +1,229 @@
 ﻿
-@model Projekt_ASP.Models.Ads.Ad
+@model Projekt_ASP.Shared.Models.Ads.Ad
 
 @{
     ViewData["Title"] = Model.Title;
 }
 
-<div class="container mt-5 mb-5">
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            @if (Model.Images != null && Model.Images.Any())
-            {
-                <div id="adImages" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @{
-                            var validImages = Model.Images
-                                .Where(i => i.ImageData != null && i.ImageData.Length > 0)
-                                .ToList();
-                        }
-                        @for (var i = 0; i < validImages.Count; i++)
-                        {
-                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(validImages[i].ImageData)"
-                                     class="d-block w-100"
-                                     style="max-height:500px; object-fit:contain;"
-                                     alt="Zdjęcie ogłoszenia" />
-                            </div>
-                        }
-                    </div>
-                    @if (validImages.Count > 1)
-                    {
-                        <button class="carousel-control-prev" type="button" data-bs-target="#adImages" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                            <span class="visually-hidden">Poprzednie</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#adImages" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                            <span class="visually-hidden">Następne</span>
-                        </button>
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="alert alert-light">Brak zdjęć tego ogłoszenia.</div>
-            }
+<style>
+    .details-page {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 36px 16px 56px;
+        color: #203047;
+    }
+
+    .details-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 24px;
+        color: #176EC4;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .details-back:hover {
+        color: #038678;
+    }
+
+    .details-card {
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 22px;
+        box-shadow: 0 12px 36px rgba(24, 52, 84, .07);
+    }
+
+    .details-top {
+        padding: 30px;
+        background: linear-gradient(110deg, #f0f7ff, #effaf8);
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .details-category {
+        display: inline-block;
+        padding: 7px 12px;
+        margin-bottom: 15px;
+        color: #038678;
+        background: #e2f5f1;
+        border-radius: 999px;
+        font-size: .85rem;
+        font-weight: 650;
+    }
+
+    .details-top h1 {
+        margin: 0 0 16px;
+        font-size: clamp(1.7rem, 4vw, 2.4rem);
+        font-weight: 750;
+        overflow-wrap: anywhere;
+    }
+
+    .details-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        color: #64748b;
+        font-size: .92rem;
+    }
+
+    .details-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .details-body {
+        padding: 30px;
+    }
+
+    .details-price {
+        margin-bottom: 28px;
+        color: #176EC4;
+        font-size: clamp(2rem, 5vw, 2.7rem);
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .details-section-title {
+        margin-bottom: 14px;
+        font-size: 1.1rem;
+        font-weight: 750;
+    }
+
+    .details-description {
+        color: #526176;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+        white-space: pre-line;
+    }
+
+    .details-contact {
+        padding: 22px;
+        margin-top: 28px;
+        background: #f6f9fc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+    }
+
+    .details-contact p {
+        margin: 0 0 12px;
+        color: #526176;
+    }
+
+    .details-contact p:last-child {
+        margin-bottom: 0;
+    }
+
+    .details-contact i {
+        width: 24px;
+        color: #038678;
+    }
+
+    .details-success {
+        padding: 14px 18px;
+        margin-bottom: 22px;
+        color: #126b4e;
+        background: #e8f7f0;
+        border: 1px solid #b7e7d1;
+        border-radius: 12px;
+    }
+
+    @@media (max-width: 576px) {
+        .details-top,
+        .details-body {
+            padding: 22px 18px;
+        }
+    }
+</style>
+
+<div class="details-page">
+    <a asp-controller="Home"
+       asp-action="Index"
+       class="details-back">
+        <i class="bi bi-arrow-left"></i>
+        Wróć do ogłoszeń
+    </a>
+
+    @if (TempData["Success"] is string successMessage)
+    {
+        <div class="details-success">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @successMessage
         </div>
+    }
 
-        <div class="col-md-6">
-            <h1>@Model.Title</h1>
-            <p class="text-muted">Kategoria: @Model.Category</p>
-            <p class="text-muted">Dodano: @Model.PostedDate.ToString("dd.MM.yyyy")</p>
-
-            <h3 class="mt-3">@Model.Price.ToString("N2") zł</h3>
-            <p><strong>Lokalizacja:</strong> @Model.Location</p>
-
-            @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
-            {
-                <p><strong>Telefon:</strong> @Model.PhoneNumber</p>
-            }
-
-            <h4 class="mt-4">Opis</h4>
-            <p style="white-space:pre-wrap;">@Model.Description</p>
-
-            @if (Model.VehicleDetails != null)
-            {
-                <h4 class="mt-4">Dane pojazdu</h4>
-                <p><strong>Marka:</strong> @Model.VehicleDetails.VehicleBrand</p>
-                <p><strong>Model:</strong> @Model.VehicleDetails.VehicleModel</p>
-                <p><strong>Rok:</strong> @Model.VehicleDetails.VehicleYear</p>
-                <p><strong>Przebieg:</strong> @Model.VehicleDetails.VehicleMileage km</p>
-            }
-
-            @if (Model.PropertyDetails != null)
-            {
-                <h4 class="mt-4">Dane nieruchomości</h4>
-                <p><strong>Typ:</strong> @Model.PropertyDetails.PropertyType</p>
-                <p><strong>Powierzchnia:</strong> @Model.PropertyDetails.PropertyArea m²</p>
-                <p><strong>Liczba pokoi:</strong> @Model.PropertyDetails.PropertyRooms</p>
-            }
-
-            @if (Model.JobDetails != null)
-            {
-                <h4 class="mt-4">Dane oferty pracy</h4>
-                <p><strong>Stanowisko:</strong> @Model.JobDetails.JobTitle</p>
-                <p><strong>Firma:</strong> @Model.JobDetails.JobCompany</p>
-                <p><strong>Typ zatrudnienia:</strong> @Model.JobDetails.JobEmploymentType</p>
-            }
-
-            @if (Model.ElectronicsDetails != null)
-            {
-                <h4 class="mt-4">Dane elektroniki</h4>
-                <p><strong>Typ:</strong> @Model.ElectronicsDetails.ElectronicsType</p>
-                <p><strong>Marka:</strong> @Model.ElectronicsDetails.ElectronicsBrand</p>
-                <p><strong>Model:</strong> @Model.ElectronicsDetails.ElectronicsModel</p>
-            }
-
-            @if (Model.ServiceDetails != null)
-            {
-                <h4 class="mt-4">Dane usługi</h4>
-                <p><strong>Typ:</strong> @Model.ServiceDetails.ServiceType</p>
-                <p><strong>Opis:</strong> @Model.ServiceDetails.ServiceDescription</p>
-            }
-
-            @if (Model.HomeAndGardenDetails != null)
-            {
-                <h4 class="mt-4">Dom i ogród</h4>
-                <p><strong>Typ:</strong> @Model.HomeAndGardenDetails.HomeAndGardenType</p>
-                <p><strong>Stan:</strong> @Model.HomeAndGardenDetails.HomeAndGardenCondition</p>
-            }
-
-            @if (Model.FashionDetails != null)
-            {
-                <h4 class="mt-4">Moda</h4>
-                <p><strong>Typ:</strong> @Model.FashionDetails.FashionType</p>
-                <p><strong>Rozmiar:</strong> @Model.FashionDetails.FashionSize</p>
-                <p><strong>Kolor:</strong> @Model.FashionDetails.FashionColor</p>
-            }
-
-            @if (Model.KidsItemDetails != null)
-            {
-                <h4 class="mt-4">Dla dzieci</h4>
-                <p><strong>Typ:</strong> @Model.KidsItemDetails.KidsItemType</p>
-                <p><strong>Wiek:</strong> @Model.KidsItemDetails.KidsAgeRange</p>
-            }
-
-            <div class="mt-4">
-                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Strona główna</a>
-                <a asp-action="CategoryAds" asp-route-category="@Model.Category"
-                   class="btn text-white" style="background-color:#1d8968;">Wróć do kategorii</a>
+    <article class="details-card">
+        <header class="details-top">
+            <div class="details-category">
+                <i class="bi bi-tag-fill me-1"></i>
+                @Model.Category
             </div>
+
+            <h1>@Model.Title</h1>
+
+            <div class="details-meta">
+                <span>
+                    <i class="bi bi-geo-alt"></i>
+                    @Model.Location
+                </span>
+
+                <span>
+                    <i class="bi bi-calendar3"></i>
+                    @Model.PostedDate.ToLocalTime().ToString("dd.MM.yyyy")
+                </span>
+            </div>
+        </header>
+
+        <div class="details-body">
+            <div class="details-price">
+                @Model.Price.ToString("N2") zł
+            </div>
+
+            <h2 class="details-section-title">
+                <i class="bi bi-card-text me-2" style="color:#176EC4"></i>
+                Opis ogłoszenia
+            </h2>
+
+            <div class="details-description">
+                @if (string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <span class="text-muted">Brak opisu tego ogłoszenia.</span>
+                }
+                else
+                {
+                    @Model.Description
+                }
+            </div>
+
+            <section class="details-contact">
+                <h2 class="details-section-title">
+                    <i class="bi bi-person-lines-fill me-2"
+                       style="color:#038678"></i>
+                    Informacje kontaktowe
+                </h2>
+
+                <p>
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <strong>Lokalizacja:</strong> @Model.Location
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
+                {
+                    <p>
+                        <i class="bi bi-telephone-fill"></i>
+                        <strong>Telefon:</strong>
+                        <a href="tel:@Model.PhoneNumber">@Model.PhoneNumber</a>
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        <i class="bi bi-telephone"></i>
+                        Nie podano numeru telefonu.
+                    </p>
+                }
+            </section>
         </div>
-    </div>
+    </article>
 </div>

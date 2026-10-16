@@ -1,0 +1,210 @@
+
+.profile-page {
+    max-width: 1000px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 30px;
+    padding: 28px;
+    background: #fff;
+    border: 1px solid #e7edf5;
+    border-radius: 18px;
+}
+
+.profile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    flex-shrink: 0;
+    border-radius: 18px;
+    background: #eaf7f5;
+    color: #038678;
+    font-size: 2rem;
+}
+
+.profile-header h1 {
+    margin: 0 0 6px;
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.profile-header p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.profile-section {
+    padding: 28px;
+    background: #fff;
+    border: 1px solid #e7edf5;
+    border-radius: 18px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.section-heading h2 {
+    margin: 0 0 5px;
+    font-size: 1.4rem;
+    font-weight: 750;
+}
+
+.section-heading p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.ads-count {
+    margin: 24px 0 14px;
+    color: #6b7280;
+}
+
+.my-ads-list {
+    display: grid;
+    gap: 16px;
+}
+
+.my-ad-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 22px;
+    border: 1px solid #e7edf5;
+    border-radius: 14px;
+}
+
+.my-ad-info {
+    min-width: 0;
+}
+
+.my-ad-info h3 {
+    margin: 0 0 10px;
+    font-size: 1.15rem;
+    font-weight: 750;
+}
+
+.my-ad-description {
+    margin-bottom: 14px;
+    color: #6b7280;
+    overflow-wrap: anywhere;
+}
+
+.my-ad-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: #6b7280;
+    font-size: .88rem;
+}
+
+.my-ad-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.my-ad-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    min-width: 145px;
+}
+
+.my-ad-price {
+    margin-bottom: 4px;
+    color: #176ec4;
+    font-size: 1.25rem;
+    text-align: right;
+}
+
+.btn-outline-custom,
+.btn-delete-custom {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-outline-custom {
+    color: #176ec4;
+    background: #fff;
+    border: 1px solid #176ec4;
+}
+
+.btn-outline-custom:hover {
+    color: #fff;
+    background: #176ec4;
+}
+
+.btn-delete-custom {
+    width: 100%;
+    color: #b42318;
+    background: #fff;
+    border: 1px solid #f0b8b4;
+}
+
+.btn-delete-custom:hover {
+    color: #fff;
+    background: #b42318;
+    border-color: #b42318;
+}
+
+.empty-profile {
+    padding: 45px 15px;
+    text-align: center;
+}
+
+.empty-profile > i {
+    color: #9ca3af;
+    font-size: 3rem;
+}
+
+.empty-profile h3 {
+    margin-top: 15px;
+    font-size: 1.2rem;
+}
+
+.empty-profile p {
+    margin-bottom: 20px;
+    color: #6b7280;
+}
+
+@media (max-width: 650px) {
+    .profile-header,
+    .profile-section {
+        padding: 20px;
+    }
+
+    .my-ad-card {
+        flex-direction: column;
+    }
+
+    .my-ad-actions {
+        width: 100%;
+    }
+
+    .my-ad-price {
+        text-align: left;
+    }
+
+    .section-heading > a {
+        width: 100%;
+    }
+}

@@ -1,15 +1,14 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Projekt_ASP.Controllers;
-using Projekt_ASP.Models;
 
+using Projekt_ASP.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-
+// Obsługa widoków MVC.
 builder.Services.AddControllersWithViews();
+
+// Sesja użytkownika.
 builder.Services.AddDistributedMemoryCache();
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -17,33 +16,20 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddHttpContextAccessor();
-
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+// Klient HTTP do komunikacji z API.
 builder.Services.AddHttpClient("AdvertisingApi", client =>
 {
     client.BaseAddress = new Uri(
-        builder.Configuration["ApiSettings:BaseUrl"]!);
+        builder.Configuration["ApiSettings:BaseUrl"]
+        ?? "http://localhost:5051");
 });
 
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30); 
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
-builder.Services.AddScoped<Projekt_ASP.Services.AdsApiClient>();
-
-builder.Services.AddControllersWithViews();
-
-
+// Serwis obsługujący ogłoszenia przez API.
+builder.Services.AddScoped<AdsApiClient>();
 
 var app = builder.Build();
 
+// Obsługa błędów.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -54,24 +40,18 @@ else
     app.UseHsts();
 }
 
-
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
-app.UseSession(); // U�ywamy sesji
-app.UseAuthentication();
+
+app.UseSession();
+
 app.UseAuthorization();
 
-app.MapDefaultControllerRoute();
-
+// Domyślna trasa, np. /Home/Index, /Ads/Create.
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
-    name: "user",
-    pattern: "User/{action=Index}/{id?}",
-    defaults: new { controller = "User", action = "Index" });
 
 app.Run();

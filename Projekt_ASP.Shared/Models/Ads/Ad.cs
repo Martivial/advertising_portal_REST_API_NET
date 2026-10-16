@@ -36,7 +36,8 @@ namespace Projekt_ASP.Shared.Models.Ads
         [Required]
         public int UserId { get; set; }
 
-        public User User { get; set; } = null!;
+        [System.Text.Json.Serialization.JsonIgnore]
+        public User? User { get; set; }
 
         // Szczegóły konkretnej kategorii
         public VehicleDetails? VehicleDetails { get; set; }

@@ -20,3 +20,181 @@ html {
 body {
   margin-bottom: 60px;
 }
+ 
+        :root {
+            --blue: #176EC4;
+            --teal: #038678;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --page: #f5f8fc;
+        }
+
+        body {
+            background: var(--page);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .main-navbar {
+            background: #fff;
+            border-bottom: 1px solid #e7edf5;
+            box-shadow: 0 3px 15px rgba(30, 60, 90, .05);
+            padding: 14px 0;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--blue);
+            font-size: 1.35rem;
+            font-weight: 800;
+            text-decoration: none;
+            letter-spacing: -.5px;
+        }
+
+        .brand-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--blue), var(--teal));
+            font-size: 1.25rem;
+        }
+
+        .main-navbar .nav-link {
+            color: #4b5563;
+            font-weight: 600;
+            padding: 10px 14px !important;
+            border-radius: 10px;
+            transition: .2s;
+        }
+
+        .main-navbar .nav-link:hover {
+            color: var(--blue);
+            background: #edf5ff;
+        }
+
+        .btn-primary-custom,
+        .btn-teal-custom {
+            display: inline-block;
+            padding: 10px 17px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: .2s;
+            cursor: pointer;
+        }
+
+        .btn-primary-custom {
+            color: #fff;
+            background: var(--blue);
+            border: 1px solid var(--blue);
+        }
+
+        .btn-primary-custom:hover {
+            color: #fff;
+            background: #125ba3;
+            border-color: #125ba3;
+            transform: translateY(-1px);
+        }
+
+        .btn-teal-custom {
+            color: #fff;
+            background: var(--teal);
+            border: 1px solid var(--teal);
+        }
+
+        .btn-teal-custom:hover {
+            color: #fff;
+            background: #026e63;
+            border-color: #026e63;
+            transform: translateY(-1px);
+        }
+
+        .user-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 13px;
+            border-radius: 10px;
+            background: #eaf7f5;
+            color: #026e63;
+            font-weight: 600;
+        }
+
+        main {
+            min-height: 75vh;
+        }
+
+        main .container {
+            padding-top: 28px;
+            padding-bottom: 28px;
+        }
+
+        .card {
+            border: 1px solid #e7edf5;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: box-shadow .2s, transform .2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 28px rgba(30, 60, 90, .09);
+        }
+
+        .form-control,
+        .form-select {
+            border-color: #dce4ee;
+            border-radius: 10px;
+            padding: 11px 13px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 .2rem rgba(23, 110, 196, .12);
+        }
+
+        .site-footer {
+            background: #fff;
+            border-top: 1px solid #e7edf5;
+            margin-top: 35px;
+            padding: 25px 0;
+            color: var(--muted);
+        }
+
+        .footer-brand {
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        @media (max-width: 991px) {
+            .main-navbar .navbar-nav {
+                padding-top: 15px;
+                align-items: stretch !important;
+            }
+
+            .main-navbar .nav-item {
+                margin-bottom: 7px;
+            }
+
+            .main-navbar .nav-item form {
+                width: 100%;
+            }
+
+            .main-navbar .nav-item form button {
+                width: 100%;
+            }
+
+            .main-navbar .btn-primary-custom,
+            .main-navbar .btn-teal-custom {
+                display: block;
+                width: 100%;
+            }
+        }
+  

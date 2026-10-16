@@ -49,18 +49,26 @@ public class AdsApiClient
             cancellationToken: cancellationToken);
     }
 
-    public async Task<Ad?> CreateAdAsync(
-        Ad ad,
-        CancellationToken cancellationToken = default)
+   public async Task<Ad?> CreateAdAsync(
+    Ad ad,
+    CancellationToken cancellationToken = default)
+{
+    var response = await CreateClient()
+        .PostAsJsonAsync("api/ads", ad, cancellationToken);
+
+    if (!response.IsSuccessStatusCode)
     {
-        var response = await CreateClient()
-            .PostAsJsonAsync("api/ads", ad, cancellationToken);
+        var error = await response.Content
+            .ReadAsStringAsync(cancellationToken);
 
-        response.EnsureSuccessStatusCode();
-
-        return await response.Content.ReadFromJsonAsync<Ad>(
-            cancellationToken: cancellationToken);
+        throw new HttpRequestException(
+            $"API zwróciło błąd {(int)response.StatusCode} " +
+            $"({response.StatusCode}). Szczegóły: {error}");
     }
+
+    return await response.Content.ReadFromJsonAsync<Ad>(
+        cancellationToken: cancellationToken);
+}
 
     public async Task<bool> UpdateAdAsync(
         int id,

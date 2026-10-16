@@ -1,88 +1,273 @@
 ﻿
+@model List<Projekt_ASP.Shared.Models.Ads.Ad>
+
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Ogłoszenia";
+    ViewData["PageCss"] = "home.css";
+
+    var categories = ViewBag.Categories as List<string> ?? new List<string>();
+    string search = ViewBag.Search as string ?? "";
+    string selectedCategory = ViewBag.Category as string ?? "";
+
+    string CategoryIcon(string category)
+    {
+        if (string.IsNullOrWhiteSpace(category))
+            return "bi bi-box-seam";
+
+        string name = category.ToLowerInvariant();
+
+        if (name.Contains("motoryz") || name.Contains("samoch") || name.Contains("vehicle"))
+            return "bi bi-car-front";
+
+        if (name.Contains("nieruchom") || name.Contains("property"))
+            return "bi bi-house";
+
+        if (name.Contains("elektron") || name.Contains("electronic"))
+            return "bi bi-phone";
+
+        if (name.Contains("praca") || name.Contains("job"))
+            return "bi bi-briefcase";
+
+        if (name.Contains("usług") || name.Contains("uslug") || name.Contains("service"))
+            return "bi bi-tools";
+
+        if (name.Contains("ogród") || name.Contains("ogrod") || name.Contains("garden") || name.Contains("dom"))
+            return "bi bi-flower1";
+
+        if (name.Contains("moda") || name.Contains("odzież") || name.Contains("odziez") || name.Contains("fashion"))
+            return "bi bi-handbag";
+
+        if (name.Contains("dzieci") || name.Contains("kids"))
+            return "bi bi-balloon";
+
+        return "bi bi-box-seam";
+    }
 }
 
+<div class="home-page">
 
+    <section class="hero-section">
+        <div class="hero-eyebrow">
+            <i class="bi bi-stars"></i>
+            <span>Twój lokalny portal ogłoszeniowy</span>
+        </div>
 
-<style>
-    a {
-        color:black;
-        text-decoration:none;
+        <h1 class="hero-title">Znajdź to, czego szukasz.</h1>
 
-    }
-</style>
+        <p class="hero-description">
+            Przeglądaj oferty, odkrywaj ciekawe okazje i znajdź coś dla siebie.
+            Wszystko w jednym miejscu.
+        </p>
 
-<div style="height: 125px;" class="bg-light">
-    <div class="d-flex justify-content-center align-items-center bg-light h-100">
-        <form class="input-group w-75 h-50" asp-controller="Ads" asp-action="Search" method="GET">
-            <input type="text"
-                   class="form-control"
-                   placeholder="Wpisz czego szukasz..."
-                   aria-label="Search"
-                   name="query">
-            <button class="btn btn-primary w-25" type="submit" style="background-color:#1d8968;">
-                <i class="bi bi-search"></i>
-            </button>
+        <form asp-controller="Home" asp-action="Index" method="get"
+              class="search-panel">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="text"
+                       name="search"
+                       value="@search"
+                       class="form-control"
+                       placeholder="Czego szukasz? Wpisz nazwę ogłoszenia..." />
+
+                <button type="submit" class="btn search-button">
+                    Szukaj
+                </button>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(selectedCategory))
+            {
+                <input type="hidden" name="category" value="@selectedCategory" />
+            }
         </form>
 
-    </div>
-</div>
-@* Kategorie przekierowujące do ogłoszeń w wybranej kategorii *@
-<div class="container-md text-center w-75">
-    <h1 class="p-5 text-center fw-bold">Kategoriee główne</h1>
-    <div class="row pb-5">
-        <div class="col">
-            <a href="@Url.Action("CategoryAds", "Ads", new { category = "Motoryzacja" })">
-                <img src="https://cdn1.iconfinder.com/data/icons/transportation-4/512/car-1024.png" alt="Motoryzacja" class="img-fluid mb-2 w-25">
-                <p>Motoryzacja</p>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("CategoryAds", "Ads", new { category = "Nieruchomości" })">
-                <img src="https://cdn-icons-png.flaticon.com/512/700/700316.png" alt="Nieruchomości" class="img-fluid mb-2 w-25">
-                <p>Nieruchomości</p>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("CategoryAds", "Ads", new { category = "Praca" })">
-                <img src="https://cdn-icons-png.flaticon.com/512/2913/2913175.png" alt="Praca" class="img-fluid mb-2 w-25">
-                <p>Praca</p>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("CategoryAds", "Ads", new { category = "Elektronika" })">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Circle-icons-computer.svg/512px-Circle-icons-computer.svg.png" alt="Elektronika" class="img-fluid mb-2 w-25">
-                <p>Elektronika</p>
-            </a>
-        </div>
-    </div>
-    <div class="row pb-5">
-        <div class="col">
-            <a href="@Url.Action("CategoryAds", "Ads", new { category = "Usługi" })">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhIizlLhwUtalgPYhxSmcvkYoOzQ0RGckXxA&s" alt="Usługi" class="img-fluid mb-2 w-25">
-                <p>Usługi</p>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("CategoryAds", "Ads", new { category = "Dom i ogród" })">
-                <img src="https://cdn-icons-png.flaticon.com/512/8616/8616201.png" alt="Dom i ogród" class="img-fluid mb-2 w-25">
-                <p>Dom i ogród</p>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("CategoryAds", "Ads", new { category = "Moda" })">
-                <img src="https://cdn-icons-png.flaticon.com/512/340/340395.png" alt="Moda" class="img-fluid mb-2 w-25">
-                <p>Moda</p>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("CategoryAds", "Ads", new { category = "Dla dzieci" })">
-                <img src="https://cdn-icons-png.flaticon.com/512/4323/4323051.png" alt="Dla dzieci" class="img-fluid mb-2 w-25">
-                <p>Dla dzieci</p>
-            </a>
-        </div>
-    </div>
-</div>
+        @if (!string.IsNullOrWhiteSpace(selectedCategory) ||
+             !string.IsNullOrWhiteSpace(search))
+        {
+            <div class="filter-info">
+                <span>Aktywne filtry:</span>
 
+                @if (!string.IsNullOrWhiteSpace(selectedCategory))
+                {
+                    <span class="filter-chip">@selectedCategory</span>
+                }
 
+                @if (!string.IsNullOrWhiteSpace(search))
+                {
+                    <span class="filter-chip">„@search”</span>
+                }
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="clear-filters">
+                    Wyczyść filtry
+                </a>
+            </div>
+        }
+    </section>
+
+    <section class="category-section">
+        <div class="section-heading">
+            <div>
+                <h2 class="section-title">Przeglądaj kategorie</h2>
+                <div class="section-subtitle">
+                    Wybierz kategorię, która Cię interesuje
+                </div>
+            </div>
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="section-link">
+                Wszystkie <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        @if (categories.Count > 0)
+        {
+            <div class="row g-2">
+                @foreach (var categoryName in categories)
+                {
+                    bool isSelected = selectedCategory == categoryName;
+
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           asp-route-category="@categoryName"
+                           asp-route-search="@search"
+                           class="category-card @(isSelected ? "selected" : "")">
+
+                            <span class="category-icon">
+                                <i class="@CategoryIcon(categoryName)"></i>
+                            </span>
+
+                            <span class="category-name">@categoryName</span>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-muted small py-3">
+                Brak dostępnych kategorii.
+            </div>
+        }
+    </section>
+
+    <section>
+        <div class="section-heading">
+            <div>
+                <h2 class="section-title">
+                    @if (!string.IsNullOrWhiteSpace(selectedCategory))
+                    {
+                        @selectedCategory
+                    }
+                    else
+                    {
+                        @:Najnowsze ogłoszenia
+                    }
+                </h2>
+
+                <div class="section-subtitle">
+                    Oferty dopasowane do Twoich potrzeb
+                </div>
+            </div>
+
+            <span class="results-count">
+                @Model.Count @(Model.Count == 1 ? "oferta" :
+                    Model.Count % 10 >= 2 && Model.Count % 10 <= 4 &&
+                    (Model.Count % 100 < 12 || Model.Count % 100 > 14)
+                        ? "oferty" : "ofert")
+            </span>
+        </div>
+
+        @if (ViewBag.ApiError != null)
+        {
+            <div class="alert api-error py-3 px-3 mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle"></i>
+                @ViewBag.ApiError
+            </div>
+        }
+        else if (Model.Count == 0)
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <h3>Nie znaleziono ogłoszeń</h3>
+
+                <p>
+                    Spróbuj zmienić wyszukiwaną frazę lub wybrać inną kategorię.
+                </p>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="reset-button">
+                    Pokaż wszystkie ogłoszenia
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var ad in Model)
+                {
+                    string safeDesc = ad.Description ?? "";
+
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <a asp-controller="Ads"
+                           asp-action="Details"
+                           asp-route-id="@ad.Id"
+                           class="ad-card">
+
+                            <div class="ad-card-content">
+                                <div class="ad-card-top">
+                                    <span class="ad-category-icon">
+                                        <i class="@CategoryIcon(ad.Category)"></i>
+                                    </span>
+
+                                    <span class="ad-category-label" title="@ad.Category">
+                                        @ad.Category
+                                    </span>
+                                </div>
+
+                                <h3 class="ad-title" title="@ad.Title">
+                                    @ad.Title
+                                </h3>
+
+                                <p class="ad-description">
+                                    @(string.IsNullOrWhiteSpace(safeDesc)
+                                        ? "Sprzedający nie dodał opisu."
+                                        : safeDesc)
+                                </p>
+
+                                <div class="ad-card-footer">
+                                    <div class="ad-meta">
+                                        <span title="@ad.Location">
+                                            <i class="bi bi-geo-alt"></i>
+                                            @(string.IsNullOrWhiteSpace(ad.Location)
+                                                ? "Brak lokalizacji"
+                                                : ad.Location)
+                                        </span>
+
+                                        <span>
+                                            <i class="bi bi-calendar3"></i>
+                                            @ad.PostedDate.ToLocalTime().ToString("dd.MM.yyyy")
+                                        </span>
+                                    </div>
+
+                                    <div class="ad-price">
+                                        @ad.Price.ToString("N2") zł
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+</div>

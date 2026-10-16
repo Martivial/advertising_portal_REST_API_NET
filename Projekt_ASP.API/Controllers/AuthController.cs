@@ -44,4 +44,29 @@ public class AuthController : ControllerBase
 
         return Ok("Rejestracja zakończona sukcesem.");
     }
+    
+[HttpPost("login")]
+public async Task<IActionResult> Login(LoginRequest request)
+{
+    var email = request.Email.Trim();
+
+    var user = await _context.Users.FirstOrDefaultAsync(u =>
+        u.Email == email);
+
+    if (user == null || user.PasswordHash != request.Password)
+    {
+        return Unauthorized(new
+        {
+            message = "Nieprawidłowy e-mail lub hasło."
+        });
+    }
+
+    return Ok(new
+    {
+        id = user.Id,
+        userName = user.UserName,
+        email = user.Email
+    });
+}
+
 }
